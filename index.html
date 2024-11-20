@@ -1,34 +1,37 @@
-<html>
-  <header>
-    <title>NZXT Z series Web int</title>
-    <link rel="stylesheet" href="./public/css/style.css" />
-  </header>
-  <body>
-    <div class="custom_text_container">
-      <p class="title"></p>
-      <p class="subtitle"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>LPT WebView</title>
+</head>
+<body>
+    <div class="container1">
+        <form id="labelForm">
+            <label for="weight">Weight:</label>
+            <input type="text" id="weight" name="weight"><br>
+            <label for="asn">ASN:</label>
+            <input type="text" id="asn" name="asn"><br>
+            <label for="pallet">Pallet ID:</label>
+            <input type="text" id="pallet" name="pallet"><br>
+            <label for="quantity">Quantity:</label>
+            <input type="text" id="quantity" name="quantity"><br>
+            <label for="country">Country of Origin:</label>
+            <input type="text" id="country" name="country"><br>
+            <label for="printers">Select Printer:</label>
+            <select id="printers"></select><br>
+            <label for="dpi">DPI: <span id="dpiDisplay">300</span></label><br>
+            <button type="button" id="printButton">Print Label</button>
+            <button type="button" id="previewButton">Preview Label</button>
+        </form>
+        <div id="zplCode"></div>
+        <div id="previewContainer">
+            <iframe id="previewIframe"></iframe>
+            <div id="document-container">
+                <div id="embed-border"></div>
+                <embed id="plugin"></div>
     </div>
-
-    <div class="info_wrapper">
-      <div class="info_container">
-        <p id="cpu_temp" class="info">42°C</p>
-        <p class="title">CPU</p>
-      </div>
-
-      <span class="divider"></span>
-
-      <div class="info_container">
-        <p id="ram_usage" class="info">0 GB</p>
-        <p class="title">RAM</p>
-      </div>
-
-      <span class="divider"></span>
-
-      <div class="info_container">
-        <p id="gpu_temp" class="info">69°C</p>
-        <p class="title">GPU</p>
-      </div>
-    </div>
-  </body>
-  <script type="module" src="./public/js/main.js"></script>
+    <script src="Script.js"></script>
+</body>
 </html>
