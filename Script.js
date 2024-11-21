@@ -7,16 +7,29 @@ document.getElementById('printButton').addEventListener('click', function() {
     const quantity = document.getElementById('quantity').value;
     const country = document.getElementById('country').value;
 
+    // Create the barcode URL (example uses a free online barcode generator)
+    const barcodeURL = (text) => `https://barcode.tec-it.com/barcode.ashx?data=${text}&code=Code128&translate-esc=false`;
+
     // Create the printable content
     const printContent = `
         <div class="container1">
             <div class="static-box">CVG110</div>
             <p><strong>Weight:</strong> ${weight}</p>
-            <p><strong>ASN:</strong> ${asn} <br><span class="barcode">[Barcode for ${asn}]</span></p>
-            <p><strong>MPN:</strong> ${mpn} <br><span class="barcode">[Barcode for ${mpn}]</span></p>
-            <p><strong>Pallet ID:</strong> ${pallet} <br><span class="barcode">[Barcode for ${pallet}]</span></p>
-            <p><strong>Quantity:</strong> ${quantity} <br><span class="barcode">[Barcode for ${quantity}]</span></p>
-            <p><strong>Country of Origin:</strong> ${country} <br><span class="barcode">[Barcode for ${country}]</span></p>
+            <div class="line"></div>
+            <p><strong>ASN:</strong> ${asn}</p>
+            <img src="${barcodeURL(asn)}" alt="ASN Barcode" class="barcode"/>
+            <div class="line"></div>
+            <p><strong>MPN:</strong> ${mpn}</p>
+            <img src="${barcodeURL(mpn)}" alt="MPN Barcode" class="barcode"/>
+            <div class="line"></div>
+            <p><strong>Pallet ID:</strong> ${pallet}</p>
+            <img src="${barcodeURL(pallet)}" alt="Pallet ID Barcode" class="barcode"/>
+            <div class="line"></div>
+            <p><strong>Quantity:</strong> ${quantity}</p>
+            <img src="${barcodeURL(quantity)}" alt="Quantity Barcode" class="barcode"/>
+            <div class="line"></div>
+            <p><strong>Country of Origin:</strong> ${country}</p>
+            <img src="${barcodeURL(country)}" alt="Country Barcode" class="barcode"/>
         </div>
     `;
 
