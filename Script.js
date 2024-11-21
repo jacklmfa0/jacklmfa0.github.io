@@ -37,7 +37,7 @@ document.getElementById('printButton').addEventListener('click', function() {
     const printTab = window.open('', '_blank');
     printTab.document.write('<html><head><title>Print Label</title>');
     printTab.document.write('<link rel="stylesheet" href="style.css">');
-    printTab.document.write('</head><body >');
+    printTab.document.write('</head><body>');
     printTab.document.write(printContent);
     printTab.document.write('</body></html>');
     printTab.document.close();
