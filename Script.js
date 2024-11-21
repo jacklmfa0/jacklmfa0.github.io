@@ -10,12 +10,13 @@ document.getElementById('printButton').addEventListener('click', function() {
     // Create the printable content
     const printContent = `
         <div class="container1">
+            <div class="static-box">CVG110</div>
             <p><strong>Weight:</strong> ${weight}</p>
-            <p><strong>ASN:</strong> ${asn}</p>
-            <p><strong>MPN:</strong> ${mpn}</p>
-            <p><strong>Pallet ID:</strong> ${pallet}</p>
-            <p><strong>Quantity:</strong> ${quantity}</p>
-            <p><strong>Country of Origin:</strong> ${country}</p>
+            <p><strong>ASN:</strong> ${asn} <br><span class="barcode">[Barcode for ${asn}]</span></p>
+            <p><strong>MPN:</strong> ${mpn} <br><span class="barcode">[Barcode for ${mpn}]</span></p>
+            <p><strong>Pallet ID:</strong> ${pallet} <br><span class="barcode">[Barcode for ${pallet}]</span></p>
+            <p><strong>Quantity:</strong> ${quantity} <br><span class="barcode">[Barcode for ${quantity}]</span></p>
+            <p><strong>Country of Origin:</strong> ${country} <br><span class="barcode">[Barcode for ${country}]</span></p>
         </div>
     `;
 
