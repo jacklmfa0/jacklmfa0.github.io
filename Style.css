@@ -1,60 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
 .container1 {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    top: 120px;
-    margin-top: 30px;
-    left: 0px;
-    white-space: nowrap;
+    width: 6in;
+    height: 4in;
+    padding: 10px;
+    border: 1px solid #000;
 }
 
 form {
-    display: inline-block;
-    text-align: left;
-}
-
-label {
     display: flex;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-    text-align: left;
+    flex-direction: column;
 }
 
-input, select {
+label, input {
     margin-bottom: 10px;
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
+}
+
+input {
+    padding: 5px;
+    font-size: 16px;
 }
 
 button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #fe9a00;
-    color: white;
+    padding: 10px;
+    font-size: 16px;
     cursor: pointer;
 }
-
-button:hover {
-    background-color: #ffc265;
-}
-
-#previewIframe {
-    display: flex;
-    width:350px; 
-    height:550px;
-}
-
-
-#previewContainer {
-    display: flex;
-    width:350px; 
-    height:550px;
-    left: 10000%;
-}
-
-
-
-
