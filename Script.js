@@ -19,15 +19,15 @@ document.getElementById('printButton').addEventListener('click', function() {
         </div>
     `;
 
-    // Create a new window and print the content
-    const printWindow = window.open('', '', 'width=6in,height=4in');
-    printWindow.document.write('<html><head><title>Print Label</title>');
-    printWindow.document.write('<link rel="stylesheet" href="style.css">');
-    printWindow.document.write('</head><body >');
-    printWindow.document.write(printContent);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    // Open the printable content in a new tab
+    const printTab = window.open('', '_blank');
+    printTab.document.write('<html><head><title>Print Label</title>');
+    printTab.document.write('<link rel="stylesheet" href="style.css">');
+    printTab.document.write('</head><body >');
+    printTab.document.write(printContent);
+    printTab.document.write('</body></html>');
+    printTab.document.close();
+    printTab.focus();
+    printTab.print();
+    printTab.close();
 });
