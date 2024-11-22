@@ -7,29 +7,37 @@ document.getElementById('printButton').addEventListener('click', function() {
     const quantity = document.getElementById('quantity').value;
     const country = document.getElementById('country').value;
 
-    // Create the barcode URL (example uses a free online barcode generator)
+    // Generate barcode URLs
     const barcodeURL = (text) => `https://barcode.tec-it.com/barcode.ashx?data=${text}&code=Code128&translate-esc=false`;
 
     // Create the printable content
     const printContent = `
-        <div class="container1">
-            <div class="static-box">CVG110</div>
-            <p><strong>Weight:</strong> ${weight}</p>
-            <div class="line"></div>
-            <p><strong>ASN:</strong> ${asn}</p>
-            <img src="${barcodeURL(asn)}" alt="ASN Barcode" class="barcode"/>
-            <div class="line"></div>
-            <p><strong>MPN:</strong> ${mpn}</p>
-            <img src="${barcodeURL(mpn)}" alt="MPN Barcode" class="barcode"/>
-            <div class="line"></div>
-            <p><strong>Pallet ID:</strong> ${pallet}</p>
-            <img src="${barcodeURL(pallet)}" alt="Pallet ID Barcode" class="barcode"/>
-            <div class="line"></div>
-            <p><strong>Quantity:</strong> ${quantity}</p>
-            <img src="${barcodeURL(quantity)}" alt="Quantity Barcode" class="barcode"/>
-            <div class="line"></div>
-            <p><strong>Country of Origin:</strong> ${country}</p>
-            <img src="${barcodeURL(country)}" alt="Country Barcode" class="barcode"/>
+        <div class="printable-page">
+            <div class="top-right-box">CVG110</div> 
+            <div class="section">
+                <strong>Weight:</strong> ${weight}
+            </div>
+            <hr> 
+                <strong>ASN:</strong> ${asn}<br>
+                <img src="${barcodeURL(asn)}" class="barcode" alt="ASN Barcode">
+            </div>
+            <hr>
+                <strong>MPN:</strong> ${mpn}<br>
+                <img src="${barcodeURL(mpn)}" class="barcode" alt="MPN Barcode">
+            </div> 
+            <hr> 
+                <strong>Pallet ID:</strong> ${pallet}<br>
+                <img src="${barcodeURL(pallet)}" class="barcode" alt="Pallet ID Barcode">
+            </div>
+            <hr>
+            <div class="section">
+                <strong>Quantity:</strong> ${quantity}<br>
+                <img src="${barcodeURL(quantity)}" class="barcode" alt="Quantity Barcode">
+            </div>
+            <hr>
+                <strong>Country of Origin:</strong> ${country}<br>
+                <img src="${barcodeURL(country)}" class="barcode" alt="Country of Origin Barcode">
+            </div>
         </div>
     `;
 
