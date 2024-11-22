@@ -3,8 +3,8 @@ body {
 }
 
 .container1 {
-  width: 6in;
-  height: 4in;
+  width: 4in;
+  height: 6in;
   padding: 10px;
   border: 1px solid #000;
   box-sizing: border-box;
