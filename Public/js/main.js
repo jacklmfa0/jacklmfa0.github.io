@@ -18,14 +18,17 @@ document.getElementById('printButton').addEventListener('click', function() {
                 <strong>Weight:</strong> ${weight}
             </div>
             <hr> 
+            <div class="section">
                 <strong>ASN:</strong> ${asn}<br>
                 <img src="${barcodeURL(asn)}" class="barcode" alt="ASN Barcode">
             </div>
             <hr>
+            <div class="section">
                 <strong>MPN:</strong> ${mpn}<br>
                 <img src="${barcodeURL(mpn)}" class="barcode" alt="MPN Barcode">
             </div> 
             <hr> 
+            <div class="section">
                 <strong>Pallet ID:</strong> ${pallet}<br>
                 <img src="${barcodeURL(pallet)}" class="barcode" alt="Pallet ID Barcode">
             </div>
@@ -35,6 +38,7 @@ document.getElementById('printButton').addEventListener('click', function() {
                 <img src="${barcodeURL(quantity)}" class="barcode" alt="Quantity Barcode">
             </div>
             <hr>
+            <div class="section">
                 <strong>Country of Origin:</strong> ${country}<br>
                 <img src="${barcodeURL(country)}" class="barcode" alt="Country of Origin Barcode">
             </div>
