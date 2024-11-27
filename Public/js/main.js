@@ -7,9 +7,6 @@ document.getElementById('printButton').addEventListener('click', function() {
     const quantity = document.getElementById('quantity').value;
     const country = document.getElementById('country').value;
 
-    // Generate barcode URLs
-    const barcodeURL = (text) => `https://barcode.tec-it.com/barcode.ashx?data=${text}&code=Code128&translate-esc=false`;
-
     // Create the printable content
     const printContent = `
         <div class="printable-page">
@@ -17,30 +14,32 @@ document.getElementById('printButton').addEventListener('click', function() {
             <div class="section">
                 <strong>Weight:</strong> ${weight}
             </div>
-            <hr> 
+            <br>
+            <br>
+            <hr class="full-width">
             <div class="section">
                 <strong>ASN:</strong> ${asn}<br>
-                <img src="${barcodeURL(asn)}" class="barcode" alt="ASN Barcode">
+                <svg id="asnBarcode"></svg>
             </div>
-            <hr>
+            <hr class="full-width">
             <div class="section">
                 <strong>MPN:</strong> ${mpn}<br>
-                <img src="${barcodeURL(mpn)}" class="barcode" alt="MPN Barcode">
+                <svg id="mpnBarcode"></svg>
             </div> 
-            <hr> 
+            <hr class="full-width">
             <div class="section">
                 <strong>Pallet ID:</strong> ${pallet}<br>
-                <img src="${barcodeURL(pallet)}" class="barcode" alt="Pallet ID Barcode">
+                <svg id="palletBarcode"></svg>
             </div>
-            <hr>
+            <hr class="full-width">
             <div class="section">
                 <strong>Quantity:</strong> ${quantity}<br>
-                <img src="${barcodeURL(quantity)}" class="barcode" alt="Quantity Barcode">
+                <svg id="quantityBarcode"></svg>
             </div>
-            <hr>
+            <hr class="full-width">
             <div class="section">
                 <strong>Country of Origin:</strong> ${country}<br>
-                <img src="${barcodeURL(country)}" class="barcode" alt="Country of Origin Barcode">
+                <svg id="countryBarcode"></svg>
             </div>
         </div>
     `;
@@ -48,9 +47,62 @@ document.getElementById('printButton').addEventListener('click', function() {
     // Open the printable content in a new tab
     const printTab = window.open('', '_blank');
     printTab.document.write('<html><head><title>Print Label</title>');
-    printTab.document.write('<link rel="stylesheet" href="style.css">');
+    printTab.document.write(`
+        <style>
+            @page {
+                size: 4in 6in; /* Ensure portrait mode is enforced */
+                margin: 0; /* Set margin to none by default */
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                height: 100%; /* Ensure body height is 100% */
+                width: 100%; /* Ensure body width is 100% */
+            }
+            .printable-page {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 10px;
+                box-sizing: border-box;
+                position: relative; /* Ensure absolute elements are positioned correctly */
+            }
+            .top-right-box {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 10px;
+                background-color: #f0f0f0;
+            }
+            .section {
+                margin-bottom: 10px;
+                text-align: left; /* Align text to the left */
+                margin-left: 5px;
+                overflow: hidden; /* Prevent overflow issues */
+            }
+            .barcode {
+                display: block;
+                margin-top: 1px; /* Adjust margin below the text */
+            }
+            .full-width {
+                width: 90%; /* Make hr span the full width */
+                margin: auto; /* Center hr horizontally */
+            }
+        </style>
+    `);
     printTab.document.write('</head><body>');
     printTab.document.write(printContent);
+    printTab.document.write(`
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+        <script>
+            JsBarcode("#asnBarcode", "${asn}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
+            JsBarcode("#mpnBarcode", "${mpn}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
+            JsBarcode("#palletBarcode", "${pallet}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
+            JsBarcode("#quantityBarcode", "${quantity}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
+            JsBarcode("#countryBarcode", "${country}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
+        </script>
+    `);
     printTab.document.write('</body></html>');
     printTab.document.close();
     printTab.focus();
