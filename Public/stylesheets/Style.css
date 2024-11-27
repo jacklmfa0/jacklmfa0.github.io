@@ -3,12 +3,13 @@ body {
 }
 
 .container1 {
-  width: 4in;
-  height: 6in;
-  padding: 10px;
-  border: 1px solid #000;
-  box-sizing: border-box;
-  position: relative;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 120px;
+  margin-top: 30px;
+  left: 43%;
+  white-space: nowrap;
 }
 
 form {
@@ -59,4 +60,8 @@ button {
   border: 1px solid black; 
   padding: 5px 10px; 
   font-weight: bold; 
+  height: 6in;
+  width: 4in;
+  
+  
 }
