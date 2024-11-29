@@ -1,111 +1,195 @@
-document.getElementById('printButton').addEventListener('click', function() {
-    // Collect the form data
-    const weight = document.getElementById('weight').value;
-    const asn = document.getElementById('asn').value;
-    const mpn = document.getElementById('mpn').value;
-    const pallet = document.getElementById('pallet').value;
-    const quantity = document.getElementById('quantity').value;
-    const country = document.getElementById('country').value;
+document.addEventListener('DOMContentLoaded', function() {
+    // Create basic form structure
+    const form = document.createElement('form');
+    form.id = 'labelForm';
+    form.style.margin = '20px';
+    form.style.display = 'flex';
+    form.style.flexDirection = 'column';
+    form.style.alignItems = 'center';
+    form.style.justifyContent = 'center';
+    form.style.height = '100vh';
 
-    // Create the printable content
-    const printContent = `
-        <div class="printable-page">
-            <div class="top-right-box">CVG110</div> 
-            <div class="section">
-                <strong>Weight:</strong> ${weight}
-            </div>
-            <br>
-            <br>
-            <hr class="full-width">
-            <div class="section">
-                <strong>ASN:</strong> ${asn}<br>
-                <svg id="asnBarcode"></svg>
-            </div>
-            <hr class="full-width">
-            <div class="section">
-                <strong>MPN:</strong> ${mpn}<br>
-                <svg id="mpnBarcode"></svg>
-            </div> 
-            <hr class="full-width">
-            <div class="section">
-                <strong>Pallet ID:</strong> ${pallet}<br>
-                <svg id="palletBarcode"></svg>
-            </div>
-            <hr class="full-width">
-            <div class="section">
-                <strong>Quantity:</strong> ${quantity}<br>
-                <svg id="quantityBarcode"></svg>
-            </div>
-            <hr class="full-width">
-            <div class="section">
-                <strong>Country of Origin:</strong> ${country}<br>
-                <svg id="countryBarcode"></svg>
-            </div>
-        </div>
-    `;
+    // Define form fields
+    const fields = ['Weight', 'ASN', 'MPN', 'Pallet ID', 'Quantity', 'Country'];
 
-    // Open the printable content in a new tab
-    const printTab = window.open('', '_blank');
-    printTab.document.write('<html><head><title>Print Label</title>');
-    printTab.document.write(`
-        <style>
-            @page {
-                size: 4in 6in; /* Ensure portrait mode is enforced */
-                margin: 0; /* Set margin to none by default */
-            }
-            body {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                height: 100%; /* Ensure body height is 100% */
-                width: 100%; /* Ensure body width is 100% */
-            }
-            .printable-page {
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                padding: 10px;
-                box-sizing: border-box;
-                position: relative; /* Ensure absolute elements are positioned correctly */
-            }
-            .top-right-box {
-                position: absolute;
-                top: 0;
-                right: 0;
-                padding: 10px;
-                background-color: #f0f0f0;
-            }
-            .section {
-                margin-bottom: 10px;
-                text-align: left; /* Align text to the left */
-                margin-left: 5px;
-                overflow: hidden; /* Prevent overflow issues */
-            }
-            .barcode {
-                display: block;
-                margin-top: 1px; /* Adjust margin below the text */
-            }
-            .full-width {
-                width: 90%; /* Make hr span the full width */
-                margin: auto; /* Center hr horizontally */
-            }
-        </style>
-    `);
-    printTab.document.write('</head><body>');
-    printTab.document.write(printContent);
-    printTab.document.write(`
-        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-        <script>
-            JsBarcode("#asnBarcode", "${asn}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
-            JsBarcode("#mpnBarcode", "${mpn}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
-            JsBarcode("#palletBarcode", "${pallet}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
-            JsBarcode("#quantityBarcode", "${quantity}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
-            JsBarcode("#countryBarcode", "${country}", { format: "CODE39", width: 1, height: 30, fontSize: 10, margin: 1 });
-        </script>
-    `);
-    printTab.document.write('</body></html>');
-    printTab.document.close();
-    printTab.focus();
-    printTab.print();
-    printTab.close();
+    fields.forEach(field => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '20px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.width = '100%';
+        div.style.maxWidth = '300px';
+
+        const label = document.createElement('label');
+        label.textContent = field + ': ';
+        label.style.marginRight = '10px';
+        label.style.flex = '1';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = field.toLowerCase().replace(/ /g, '_');
+        input.name = field.toLowerCase().replace(/ /g, '_');
+        input.required = true;
+        input.style.width = '200px';
+        input.style.flex = '2';
+
+        div.appendChild(label);
+        div.appendChild(input);
+        form.appendChild(div);
+    });
+
+    // Add print button
+    const printButton = document.createElement('button');
+    printButton.textContent = 'Print Label';
+    printButton.type = 'submit';
+    form.appendChild(printButton);
+
+    // Add form to document
+    document.body.appendChild(form);
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Get form values
+        const formValues = {};
+        fields.forEach(field => {
+            const id = field.toLowerCase().replace(/ /g, '_');
+            const value = document.getElementById(id).value;
+            formValues[id] = value;
+        });
+
+        // Create print window
+        const printWindow = window.open('', '_blank');
+        
+        // Convert formValues to a JSON string to pass between windows
+        const formValuesString = JSON.stringify(formValues);
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+                <style>
+                    @media print {
+                        @page {
+                            size: 4in 80in portrait;
+                            margin: 0;
+                        }
+                        body {
+                            width: 4in;
+                            height: 80in;
+                            margin: 0;
+                            padding: 0.25in;
+                            box-sizing: border-box;
+                            font-family: Arial, sans-serif;
+                        }
+                        .label-content {
+                            width: 100%;
+                            height: 100%;
+                            position: relative;
+                        }
+                        .field {
+                            margin-bottom: 0.2in;
+                            font-size: 12pt;
+                            page-break-inside: avoid;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+                        .field-label {
+                            margin-bottom: 0.05in;
+                            font-weight: bold;
+                        }
+                        .header {
+                            position: absolute;
+                            top: 0.25in;
+                            right: 0.25in;
+                            padding: 0.1in;
+                        }
+                        svg {
+                            display: block;
+                            margin-top: 0.05in;
+                            max-width: 3.5in;
+                            height: 0.5in;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="label-content">
+                    <div class="header">CVG110</div>
+                    <div class="field">
+                        <div class="field-label"><strong>Weight:</strong> <span id="weightValue"></span></div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label"><strong>ASN:</strong> <span id="asnValue"></span></div>
+                        <svg id="asnBarcode"></svg>
+                    </div>
+                    <div class="field">
+                        <div class="field-label"><strong>MPN:</strong> <span id="mpnValue"></span></div>
+                        <svg id="mpnBarcode"></svg>
+                    </div>
+                    <div class="field">
+                        <div class="field-label"><strong>Pallet ID:</strong> <span id="palletValue"></span></div>
+                        <svg id="palletBarcode"></svg>
+                    </div>
+                    <div class="field">
+                        <div class="field-label"><strong>Quantity:</strong> <span id="quantityValue"></span></div>
+                        <svg id="quantityBarcode"></svg>
+                    </div>
+                    <div class="field">
+                        <div class="field-label"><strong>Country:</strong> <span id="countryValue"></span></div>
+                        <svg id="countryBarcode"></svg>
+                    </div>
+                </div>
+                <script>
+                    const formValues = ${formValuesString};
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Populate text values
+                        document.getElementById('weightValue').textContent = formValues.weight || '';
+                        document.getElementById('asnValue').textContent = formValues.asn || '';
+                        document.getElementById('mpnValue').textContent = formValues.mpn || '';
+                        document.getElementById('palletValue').textContent = formValues.pallet_id || '';
+                        document.getElementById('quantityValue').textContent = formValues.quantity || '';
+                        document.getElementById('countryValue').textContent = formValues.country || '';
+
+                        const barcodeConfig = {
+                            format: "CODE128",
+                            width: 2,
+                            height: 40,
+                            displayValue: true
+                        };
+
+                        // Generate barcodes if values are present
+                        if (formValues.asn) {
+                            JsBarcode("#asnBarcode", formValues.asn, barcodeConfig);
+                        }
+                        if (formValues.mpn) {
+                            JsBarcode("#mpnBarcode", formValues.mpn, barcodeConfig);
+                        }
+                        if (formValues.pallet_id) {
+                            JsBarcode("#palletBarcode", formValues.pallet_id, barcodeConfig);
+                        }
+                        if (formValues.quantity) {
+                            JsBarcode("#quantityBarcode", formValues.quantity, barcodeConfig);
+                        }
+                        if (formValues.country) {
+                            JsBarcode("#countryBarcode", formValues.country, barcodeConfig);
+                        }
+                    });
+
+                    window.onload = function() {
+                        setTimeout(() => {
+                            window.print();
+                            setTimeout(() => window.close(), 500);
+                        }, 1000);
+                    };
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    });
 });
