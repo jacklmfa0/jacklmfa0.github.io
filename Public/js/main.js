@@ -1,5 +1,5 @@
 document.getElementById("performanceForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form reload
+    event.preventDefault(); // Prevent form from resetting
 
     // Gather input values
     const weight = parseFloat(document.getElementById("weight").value);
@@ -11,6 +11,7 @@ document.getElementById("performanceForm").addEventListener("submit", function (
     const runwaySurface = document.getElementById("runwaySurface").value; // "dry" or "wet"
     const powerSetting = document.getElementById("powerSetting").value; // "mil" or "ab"
 
+    // Validate inputs
     if (isNaN(weight) || isNaN(fuel) || isNaN(tempF) || isNaN(runwayLength) || isNaN(slope) || isNaN(densityAltitude)) {
         alert("Please fill in all fields with valid values.");
         return;
@@ -77,7 +78,12 @@ function calculateTakeoff({ weight, temp, runwayLength, slope, densityAltitude, 
     const takeoffDistance = Math.pow(rotationSpeed * 1.68781, 2) / (2 * acceleration); // Kinematic equation
     const refusalSpeed = baseSpeed + RCR * 0.1; // Adjust for runway conditions
 
-    return { accelerationSpeed, rotationSpeed, takeoffDistance, refusalSpeed };
+    return { 
+        accelerationSpeed: accelerationSpeed, 
+        rotationSpeed: rotationSpeed, 
+        takeoffDistance: takeoffDistance, 
+        refusalSpeed: refusalSpeed 
+    };
 }
 
 function calculateLanding({ weight, slope, RCR }) {
@@ -87,7 +93,11 @@ function calculateLanding({ weight, slope, RCR }) {
     const stoppingDistanceDry = Math.pow(landingSpeed * 1.68781, 2) / (2 * decelerationDry);
     const stoppingDistanceWet = stoppingDistanceDry * 1.3; // Increase for wet conditions
 
-    return { landingSpeed, stoppingDistanceDry, stoppingDistanceWet };
+    return { 
+        landingSpeed: landingSpeed, 
+        stoppingDistanceDry: stoppingDistanceDry, 
+        stoppingDistanceWet: stoppingDistanceWet 
+    };
 }
 
 function displayResults({ takeoffResults, landingResults }) {
@@ -109,4 +119,10 @@ function displayResults({ takeoffResults, landingResults }) {
             <p><strong>Stopping Distance (Wet):</strong> ${landingResults.stoppingDistanceWet.toFixed(2)} ft</p>
         </div>
     `;
+    
+    // Remove the "no results" placeholder
+    const noResultsElement = document.getElementById("noResults");
+    if (noResultsElement) {
+        noResultsElement.style.display = "none";
+    }
 }
