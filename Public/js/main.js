@@ -2,8 +2,8 @@
 const CG_CORRECTION = 0.8; // Knots per 1% CG shift
 const SLOPE_CORRECTION = 0.01; // % per degree
 const WET_RUNWAY_FACTOR = 1.3; // Multiplier for wet runway distances
-const TEMPERATURE_CONVERSION = 5 / 9; // Convert °F to °C for calculations
 const REFUSAL_SPEED_ADJUSTMENT = 10; // Adjustment for refusal speed
+const TEMPERATURE_CONVERSION = 5 / 9; // Convert °F to °C for calculations
 
 // Event Listener for Form Submission
 document.getElementById("performanceForm").addEventListener("submit", function (event) {
@@ -18,6 +18,8 @@ document.getElementById("performanceForm").addEventListener("submit", function (
     const densityAltitude = parseInt(document.getElementById("densityAltitude").value);
     const runwaySurface = document.getElementById("runwaySurface").value;
     const powerSetting = document.getElementById("powerSetting").value;
+    const normalLandingSurface = document.getElementById("normalLandingSurface").value; // Normal landing surface
+    const heavyLandingSurface = document.getElementById("heavyLandingSurface").value; // Heavy landing surface
 
     // Perform calculations
     const accelerationCheckpoint = computeAccelerationCheckpoint(weight, powerSetting);
@@ -25,8 +27,8 @@ document.getElementById("performanceForm").addEventListener("submit", function (
     const takeoffSpeed = computeTakeoffSpeed(rotationSpeed);
     const takeoffDistance = computeTakeoffDistance(weight, densityAltitude, temperature, runwaySlope, powerSetting);
     const refusalSpeed = computeRefusalSpeed(weight, runwayLength, powerSetting);
-    const normalLanding = computeLandingData(weight, runwaySurface, "normal");
-    const heavyLanding = computeLandingData(weight, runwaySurface, "heavy");
+    const normalLanding = computeLandingData(weight, normalLandingSurface, "normal"); // Calculate for normal landing
+    const heavyLanding = computeLandingData(weight, heavyLandingSurface, "heavy"); // Calculate for heavy landing
 
     // Display results
     displayResults(
@@ -82,94 +84,15 @@ function computeRefusalSpeed(weight, runwayLength, powerSetting) {
 function computeLandingData(weight, surface, type) {
     const baseDistance = type === "normal" ? lookupLandingDistance(weight) : lookupHeavyLandingDistance(weight);
     const baseSpeed = type === "normal" ? lookupLandingSpeed(weight) : lookupHeavyLandingSpeed(weight);
+
+    // Apply wet surface correction (1.3 multiplier for wet runways)
     const surfaceAdjustment = surface === "wet" ? baseDistance * WET_RUNWAY_FACTOR : 0;
+
+    // Return an object with speed and corrected distance
     return {
         speed: baseSpeed,
         distance: baseDistance + surfaceAdjustment,
     };
-}
-
-// Lookup tables for base speeds and distances
-function lookupAccelerationCheckpoint(weight) {
-    const chart = {
-        25000: 500, // Example: 500 ft for 25,000 lbs
-        30000: 550,
-        35000: 600,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupTakeoffSpeed(weight) {
-    const chart = {
-        25000: 140, // Example: 140 knots at 25,000 lbs
-        30000: 150,
-        35000: 160,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupTakeoffDistance(weight) {
-    const chart = {
-        25000: 3000, // Example: 3000 ft at 25,000 lbs
-        30000: 3500,
-        35000: 4000,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupRefusalSpeed(weight) {
-    const chart = {
-        25000: 120, // Example: 120 knots at 25,000 lbs
-        30000: 130,
-        35000: 140,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupLandingDistance(weight) {
-    const chart = {
-        25000: 4000,
-        30000: 4500,
-        35000: 5000,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupLandingSpeed(weight) {
-    const chart = {
-        25000: 130,
-        30000: 140,
-        35000: 150,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupHeavyLandingDistance(weight) {
-    const chart = {
-        25000: 4500,
-        30000: 5000,
-        35000: 5500,
-    };
-    return interpolate(weight, chart);
-}
-
-function lookupHeavyLandingSpeed(weight) {
-    const chart = {
-        25000: 140,
-        30000: 150,
-        35000: 160,
-    };
-    return interpolate(weight, chart);
-}
-
-// Interpolation helper function for non-linear charts
-function interpolate(value, chart) {
-    const keys = Object.keys(chart).map(Number);
-    const lowerKey = Math.max(...keys.filter((k) => k <= value));
-    const upperKey = Math.min(...keys.filter((k) => k >= value));
-    if (lowerKey === upperKey) return chart[lowerKey];
-    const slope = (chart[upperKey] - chart[lowerKey]) / (upperKey - lowerKey);
-    return chart[lowerKey] + slope * (value - lowerKey);
 }
 
 // Display results in the results section
