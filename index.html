@@ -4,60 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aircraft Performance Calculator</title>
-    <link rel="stylesheet" href="Public/stylesheets/Style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select, .btn {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-top: 0.2rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            cursor: pointer;
+            background: #007BFF;
+            color: white;
+            border: none;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .results p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        hr {
+            border: 1px solid #ddd;
+            margin: 2rem 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <div class="card-header">Input Parameters</div>
+            <div class="card-header">Aircraft Performance Calculator</div>
             <form id="performanceForm">
                 <div class="form-group">
-                    <label>Weight (lbs)</label>
+                    <label for="weight">Weight (lbs):</label>
                     <input type="number" id="weight" name="weight" placeholder="Enter aircraft weight" required>
                 </div>
                 <div class="form-group">
-                    <label>Fuel Amount (lbs)</label>
-                    <input type="number" id="fuelAmount" name="fuelAmount" placeholder="Enter fuel amount" required>
+                    <label for="fuel">Fuel Amount (lbs):</label>
+                    <input type="number" id="fuel" name="fuel" placeholder="Enter fuel amount" required>
                 </div>
                 <div class="form-group">
-                    <label>Temperature (°F)</label>
+                    <label for="temperature">Temperature (°F):</label>
                     <input type="number" id="temperature" name="temperature" placeholder="Enter temperature" required>
                 </div>
                 <div class="form-group">
-                    <label>Runway Length (ft)</label>
+                    <label for="runwayLength">Runway Length (ft):</label>
                     <input type="number" id="runwayLength" name="runwayLength" placeholder="Enter runway length" required>
                 </div>
                 <div class="form-group">
-                    <label>Runway Slope (%)</label>
+                    <label for="runwaySlope">Runway Slope (%):</label>
                     <input type="number" id="runwaySlope" name="runwaySlope" placeholder="Enter runway slope" required>
                 </div>
                 <div class="form-group">
-                    <label>Density Altitude (ft)</label>
+                    <label for="densityAltitude">Density Altitude (ft):</label>
                     <input type="number" id="densityAltitude" name="densityAltitude" placeholder="Enter density altitude" required>
                 </div>
                 <div class="form-group">
-                    <label>Runway Surface</label>
+                    <label for="runwaySurface">Runway Surface:</label>
                     <select id="runwaySurface" name="runwaySurface">
                         <option value="dry">Dry</option>
                         <option value="wet">Wet</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Normal Landing Surface</label>
-                    <select id="normalLandingSurface" name="normalLandingSurface">
-                        <option value="dry">Dry</option>
-                        <option value="wet">Wet</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Heavy Landing Surface</label>
-                    <select id="heavyLandingSurface" name="heavyLandingSurface">
-                        <option value="dry">Dry</option>
-                        <option value="wet">Wet</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Power Setting</label>
+                    <label for="powerSetting">Power Setting:</label>
                     <select id="powerSetting" name="powerSetting">
                         <option value="mil">MIL Power</option>
                         <option value="ab">Afterburner</option>
@@ -69,12 +115,15 @@
 
         <div class="card">
             <div class="card-header">Performance Results</div>
-            <div id="results">
-                <p id="noResults" class="text-center">Calculate performance to see results</p>
+            <div id="results" class="results">
+                <p id="noResults">Calculate performance to see results.</p>
             </div>
         </div>
     </div>
 
-    <script src="Public/js/main.js"></script>
+    <script>
+        // Link the JavaScript logic from the provided script
+        // Include the updated logic here or link to an external JavaScript file
+    </script>
 </body>
 </html>
