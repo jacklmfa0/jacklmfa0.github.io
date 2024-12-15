@@ -1,36 +1,46 @@
-document.getElementById("performanceForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form from resetting
+// Wait for the DOM to fully load before adding event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const performanceForm = document.getElementById("performanceForm");
+    
+    // Ensure the form exists before adding event listener
+    if (performanceForm) {
+        performanceForm.addEventListener("submit", function(event) {
+            // Prevent the default form submission behavior
+            event.preventDefault();
 
-    // Gather input values
-    const weight = parseFloat(document.getElementById("weight").value);
-    const fuel = parseFloat(document.getElementById("fuel").value);
-    const tempF = parseFloat(document.getElementById("temperature").value);
-    const runwayLength = parseFloat(document.getElementById("runwayLength").value);
-    const slope = parseFloat(document.getElementById("runwaySlope").value);
-    const densityAltitude = parseFloat(document.getElementById("densityAltitude").value);
-    const runwaySurface = document.getElementById("runwaySurface").value; // "dry" or "wet"
-    const powerSetting = document.getElementById("powerSetting").value; // "mil" or "ab"
+            // Gather input values
+            const weight = parseFloat(document.getElementById("weight").value);
+            const fuel = parseFloat(document.getElementById("fuel").value);
+            const tempF = parseFloat(document.getElementById("temperature").value);
+            const runwayLength = parseFloat(document.getElementById("runwayLength").value);
+            const slope = parseFloat(document.getElementById("runwaySlope").value);
+            const densityAltitude = parseFloat(document.getElementById("densityAltitude").value);
+            const runwaySurface = document.getElementById("runwaySurface").value;
+            const powerSetting = document.getElementById("powerSetting").value;
 
-    // Validate inputs
-    if (isNaN(weight) || isNaN(fuel) || isNaN(tempF) || isNaN(runwayLength) || isNaN(slope) || isNaN(densityAltitude)) {
-        alert("Please fill in all fields with valid values.");
-        return;
+            // Validate inputs
+            if (isNaN(weight) || isNaN(fuel) || isNaN(tempF) || 
+                isNaN(runwayLength) || isNaN(slope) || isNaN(densityAltitude)) {
+                alert("Please fill in all fields with valid numbers.");
+                return;
+            }
+
+            // Perform calculations
+            const results = calculatePerformance({
+                weight,
+                fuel,
+                tempF,
+                runwayLength,
+                slope,
+                densityAltitude,
+                runwaySurface,
+                powerSetting
+            });
+
+            // Display results
+            displayResults(results);
+        });
     }
-
-    // Perform calculations
-    const results = calculatePerformance({
-        weight,
-        fuel,
-        tempF,
-        runwayLength,
-        slope,
-        densityAltitude,
-        runwaySurface,
-        powerSetting,
-    });
-
-    // Display results
-    displayResults(results);
 });
 
 function calculatePerformance({
@@ -102,7 +112,14 @@ function calculateLanding({ weight, slope, RCR }) {
 
 function displayResults({ takeoffResults, landingResults }) {
     const resultsContainer = document.getElementById("results");
+    const noResultsElement = document.getElementById("noResults");
 
+    // Hide the "no results" placeholder
+    if (noResultsElement) {
+        noResultsElement.style.display = "none";
+    }
+
+    // Update results container with calculation results
     resultsContainer.innerHTML = `
         <div>
             <h3>Takeoff Performance</h3>
@@ -119,10 +136,4 @@ function displayResults({ takeoffResults, landingResults }) {
             <p><strong>Stopping Distance (Wet):</strong> ${landingResults.stoppingDistanceWet.toFixed(2)} ft</p>
         </div>
     `;
-    
-    // Remove the "no results" placeholder
-    const noResultsElement = document.getElementById("noResults");
-    if (noResultsElement) {
-        noResultsElement.style.display = "none";
-    }
 }
