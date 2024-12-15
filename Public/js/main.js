@@ -2,26 +2,97 @@ document.getElementById("performanceForm").addEventListener("submit", function (
     event.preventDefault(); // Prevent form reload
 
     // Gather input values
-    const weight = parseFloat(document.getElementById("weight").value); // in lbs
-    const fuel = parseFloat(document.getElementById("fuelAmount").value); // in lbs
-    const tempF = parseFloat(document.getElementById("temperature").value); // in °F
-    const runwayLength = parseFloat(document.getElementById("runwayLength").value); // in ft
-    const slope = parseFloat(document.getElementById("runwaySlope").value); // in %
-    const densityAltitude = parseFloat(document.getElementById("densityAltitude").value); // in ft
+    const weight = parseFloat(document.getElementById("weight").value);
+    const fuel = parseFloat(document.getElementById("fuel").value);
+    const tempF = parseFloat(document.getElementById("temperature").value);
+    const runwayLength = parseFloat(document.getElementById("runwayLength").value);
+    const slope = parseFloat(document.getElementById("runwaySlope").value);
+    const densityAltitude = parseFloat(document.getElementById("densityAltitude").value);
     const runwaySurface = document.getElementById("runwaySurface").value; // "dry" or "wet"
     const powerSetting = document.getElementById("powerSetting").value; // "mil" or "ab"
 
+    if (isNaN(weight) || isNaN(fuel) || isNaN(tempF) || isNaN(runwayLength) || isNaN(slope) || isNaN(densityAltitude)) {
+        alert("Please fill in all fields with valid values.");
+        return;
+    }
+
+    // Perform calculations
+    const results = calculatePerformance({
+        weight,
+        fuel,
+        tempF,
+        runwayLength,
+        slope,
+        densityAltitude,
+        runwaySurface,
+        powerSetting,
+    });
+
+    // Display results
+    displayResults(results);
+});
+
+function calculatePerformance({
+    weight,
+    fuel,
+    tempF,
+    runwayLength,
+    slope,
+    densityAltitude,
+    runwaySurface,
+    powerSetting,
+}) {
     // Conversion factors and constants
-    const tempC = (tempF - 32) * 5 / 9; // Convert °F to °C
-    const thrust = powerSetting === "ab" ? 60000 : 40000; // Approximate thrust in lbs
+    const tempC = (tempF - 32) * 5 / 9; // Convert Fahrenheit to Celsius
+    const thrust = powerSetting === "ab" ? 60000 : 40000; // Approximate thrust (in lbs)
     const RCR = runwaySurface === "dry" ? 23 : 18; // Runway Condition Reading
 
-    // Perform Calculations
-    const takeoffResults = calculateTakeoff({ weight, temp: tempC, runwayLength, slope, densityAltitude, thrust, RCR });
-    const landingResults = calculateLanding({ weight, slope, RCR });
+    // Takeoff Calculations
+    const takeoffResults = calculateTakeoff({
+        weight,
+        temp: tempC,
+        runwayLength,
+        slope,
+        densityAltitude,
+        thrust,
+        RCR,
+    });
 
-    // Update Results in DOM
+    // Landing Calculations
+    const landingResults = calculateLanding({
+        weight,
+        slope,
+        RCR,
+    });
+
+    return { takeoffResults, landingResults };
+}
+
+function calculateTakeoff({ weight, temp, runwayLength, slope, densityAltitude, thrust, RCR }) {
+    const baseSpeed = 150; // Baseline decision speed in knots
+    const rotationSpeed = baseSpeed + (weight / 1000) * 0.2; // Adjust for weight
+    const accelerationSpeed = rotationSpeed - 10; // Approximate checkpoint
+    const drag = 0.02 * weight; // Simplified drag calculation
+    const acceleration = (thrust - drag) / weight; // Acceleration (ft/s²)
+    const takeoffDistance = Math.pow(rotationSpeed * 1.68781, 2) / (2 * acceleration); // Kinematic equation
+    const refusalSpeed = baseSpeed + RCR * 0.1; // Adjust for runway conditions
+
+    return { accelerationSpeed, rotationSpeed, takeoffDistance, refusalSpeed };
+}
+
+function calculateLanding({ weight, slope, RCR }) {
+    const landingSpeed = 125 + (weight / 1000) * 0.15; // Adjust for weight
+    const decelerationDry = 15; // Deceleration rate on dry runway (ft/s²)
+    const decelerationWet = decelerationDry * 0.7; // Reduced rate on wet runway
+    const stoppingDistanceDry = Math.pow(landingSpeed * 1.68781, 2) / (2 * decelerationDry);
+    const stoppingDistanceWet = stoppingDistanceDry * 1.3; // Increase for wet conditions
+
+    return { landingSpeed, stoppingDistanceDry, stoppingDistanceWet };
+}
+
+function displayResults({ takeoffResults, landingResults }) {
     const resultsContainer = document.getElementById("results");
+
     resultsContainer.innerHTML = `
         <div>
             <h3>Takeoff Performance</h3>
@@ -38,28 +109,4 @@ document.getElementById("performanceForm").addEventListener("submit", function (
             <p><strong>Stopping Distance (Wet):</strong> ${landingResults.stoppingDistanceWet.toFixed(2)} ft</p>
         </div>
     `;
-});
-
-// Takeoff Calculations
-const calculateTakeoff = ({ weight, temp, runwayLength, slope, densityAltitude, thrust, RCR }) => {
-    const baseSpeed = 150; // Baseline speed for V1 (knots)
-    const rotationSpeed = baseSpeed + (weight / 1000) * 0.2; // Adjust for weight
-    const accelerationSpeed = rotationSpeed - 10; // Approximate checkpoint
-    const drag = 0.02 * weight; // Simplified drag calculation
-    const acceleration = (thrust - drag) / weight; // Acceleration (ft/s²)
-    const takeoffDistance = Math.pow(rotationSpeed * 1.68781, 2) / (2 * acceleration); // Kinematic equation
-    const refusalSpeed = baseSpeed + RCR * 0.1; // Adjust for runway conditions
-
-    return { accelerationSpeed, rotationSpeed, takeoffDistance, refusalSpeed };
-};
-
-// Landing Calculations
-const calculateLanding = ({ weight, slope, RCR }) => {
-    const landingSpeed = 125 + (weight / 1000) * 0.15; // Adjust for weight
-    const decelerationDry = 15; // Deceleration rate on dry runway (ft/s²)
-    const decelerationWet = decelerationDry * 0.7; // Reduced rate on wet runway
-    const stoppingDistanceDry = Math.pow(landingSpeed * 1.68781, 2) / (2 * decelerationDry);
-    const stoppingDistanceWet = stoppingDistanceDry * 1.3; // Increase for wet conditions
-
-    return { landingSpeed, stoppingDistanceDry, stoppingDistanceWet };
-};
+}
