@@ -1,31 +1,35 @@
-// Wait for the DOM to fully load before adding event listeners
 document.addEventListener('DOMContentLoaded', function() {
     const performanceForm = document.getElementById("performanceForm");
     
-    // Ensure the form exists before adding event listener
     if (performanceForm) {
         performanceForm.addEventListener("submit", function(event) {
-            // Prevent the default form submission behavior
             event.preventDefault();
+            event.stopPropagation();
 
-            // Gather input values
-            const weight = parseFloat(document.getElementById("weight").value);
-            const fuel = parseFloat(document.getElementById("fuel").value);
-            const tempF = parseFloat(document.getElementById("temperature").value);
-            const runwayLength = parseFloat(document.getElementById("runwayLength").value);
-            const slope = parseFloat(document.getElementById("runwaySlope").value);
-            const densityAltitude = parseFloat(document.getElementById("densityAltitude").value);
-            const runwaySurface = document.getElementById("runwaySurface").value;
-            const powerSetting = document.getElementById("powerSetting").value;
+            const weightInput = document.getElementById("weight");
+            const fuelInput = document.getElementById("fuel");
+            const tempInput = document.getElementById("temperature");
+            const runwayLengthInput = document.getElementById("runwayLength");
+            const slopeInput = document.getElementById("runwaySlope");
+            const densityAltitudeInput = document.getElementById("densityAltitude");
+            const runwaySurfaceInput = document.getElementById("runwaySurface");
+            const powerSettingInput = document.getElementById("powerSetting");
 
-            // Validate inputs
+            const weight = parseFloat(weightInput.value);
+            const fuel = parseFloat(fuelInput.value);
+            const tempF = parseFloat(tempInput.value);
+            const runwayLength = parseFloat(runwayLengthInput.value);
+            const slope = parseFloat(slopeInput.value);
+            const densityAltitude = parseFloat(densityAltitudeInput.value);
+            const runwaySurface = runwaySurfaceInput.value;
+            const powerSetting = powerSettingInput.value;
+
             if (isNaN(weight) || isNaN(fuel) || isNaN(tempF) || 
                 isNaN(runwayLength) || isNaN(slope) || isNaN(densityAltitude)) {
                 alert("Please fill in all fields with valid numbers.");
                 return;
             }
 
-            // Perform calculations
             const results = calculatePerformance({
                 weight,
                 fuel,
@@ -37,8 +41,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 powerSetting
             });
 
-            // Display results
             displayResults(results);
+
+            weightInput.value = weight;
+            fuelInput.value = fuel;
+            tempInput.value = tempF;
+            runwayLengthInput.value = runwayLength;
+            slopeInput.value = slope;
+            densityAltitudeInput.value = densityAltitude;
+            runwaySurfaceInput.value = runwaySurface;
+            powerSettingInput.value = powerSetting;
         });
     }
 });
@@ -53,12 +65,10 @@ function calculatePerformance({
     runwaySurface,
     powerSetting,
 }) {
-    // Conversion factors and constants
-    const tempC = (tempF - 32) * 5 / 9; // Convert Fahrenheit to Celsius
-    const thrust = powerSetting === "ab" ? 60000 : 40000; // Approximate thrust (in lbs)
-    const RCR = runwaySurface === "dry" ? 23 : 18; // Runway Condition Reading
+    const tempC = (tempF - 32) * 5 / 9;
+    const thrust = powerSetting === "ab" ? 23800 : 17000; // More realistic F-16 thrust values
+    const RCR = runwaySurface === "dry" ? 23 : 18;
 
-    // Takeoff Calculations
     const takeoffResults = calculateTakeoff({
         weight,
         temp: tempC,
@@ -69,7 +79,6 @@ function calculatePerformance({
         RCR,
     });
 
-    // Landing Calculations
     const landingResults = calculateLanding({
         weight,
         slope,
@@ -80,13 +89,20 @@ function calculatePerformance({
 }
 
 function calculateTakeoff({ weight, temp, runwayLength, slope, densityAltitude, thrust, RCR }) {
-    const baseSpeed = 150; // Baseline decision speed in knots
-    const rotationSpeed = baseSpeed + (weight / 1000) * 0.2; // Adjust for weight
-    const accelerationSpeed = rotationSpeed - 10; // Approximate checkpoint
-    const drag = 0.02 * weight; // Simplified drag calculation
-    const acceleration = (thrust - drag) / weight; // Acceleration (ft/s²)
-    const takeoffDistance = Math.pow(rotationSpeed * 1.68781, 2) / (2 * acceleration); // Kinematic equation
-    const refusalSpeed = baseSpeed + RCR * 0.1; // Adjust for runway conditions
+    // F-16 specific performance calculations
+    const baseSpeed = 140; // Baseline decision speed for F-16
+    const rotationSpeed = baseSpeed + (weight / 20000) * 5; // More nuanced speed calculation
+    const accelerationSpeed = rotationSpeed - 10;
+    
+    // More realistic drag and acceleration calculation
+    const drag = 0.01 * weight; // Reduced drag coefficient
+    const acceleration = (thrust - drag) / weight;
+    
+    // Adjusted takeoff distance calculation based on F-16 performance data
+    const takeoffDistance = Math.pow(rotationSpeed * 1.68781, 2) / (2 * acceleration * 1.3);
+    
+    // Refusal speed adjusted for F-16 characteristics
+    const refusalSpeed = baseSpeed + (RCR * 0.05);
 
     return { 
         accelerationSpeed: accelerationSpeed, 
@@ -97,11 +113,11 @@ function calculateTakeoff({ weight, temp, runwayLength, slope, densityAltitude, 
 }
 
 function calculateLanding({ weight, slope, RCR }) {
-    const landingSpeed = 125 + (weight / 1000) * 0.15; // Adjust for weight
-    const decelerationDry = 15; // Deceleration rate on dry runway (ft/s²)
-    const decelerationWet = decelerationDry * 0.7; // Reduced rate on wet runway
+    const landingSpeed = 120 + (weight / 15000) * 5; // Adjusted for F-16 landing characteristics
+    const decelerationDry = 12; // Slightly reduced deceleration rate
+    const decelerationWet = decelerationDry * 0.7;
     const stoppingDistanceDry = Math.pow(landingSpeed * 1.68781, 2) / (2 * decelerationDry);
-    const stoppingDistanceWet = stoppingDistanceDry * 1.3; // Increase for wet conditions
+    const stoppingDistanceWet = stoppingDistanceDry * 1.3;
 
     return { 
         landingSpeed: landingSpeed, 
@@ -114,12 +130,10 @@ function displayResults({ takeoffResults, landingResults }) {
     const resultsContainer = document.getElementById("results");
     const noResultsElement = document.getElementById("noResults");
 
-    // Hide the "no results" placeholder
     if (noResultsElement) {
         noResultsElement.style.display = "none";
     }
 
-    // Update results container with calculation results
     resultsContainer.innerHTML = `
         <div>
             <h3>Takeoff Performance</h3>
